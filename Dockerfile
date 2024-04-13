@@ -48,4 +48,4 @@ COPY . .
 EXPOSE 5000
 
 # Run the application.
-CMD gunicorn 'venv.lib.python3.8.site-packages.werkzeug.wsgi' --bind=0.0.0.0:5000
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
