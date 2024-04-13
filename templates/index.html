@@ -1,0 +1,174 @@
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+
+<!--<head>-->
+<!--&lt;!&ndash;    <style>&ndash;&gt;-->
+<!--&lt;!&ndash;        #map {&ndash;&gt;-->
+<!--&lt;!&ndash;            height: 400px;&ndash;&gt;-->
+<!--&lt;!&ndash;            width: 100%;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+<!--&lt;!&ndash;    </style>&ndash;&gt;-->
+<!--    <title>Weather App</title>-->
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div class="container">-->
+<!--        <h1>Weather App</h1>-->
+<!--&lt;!&ndash;        <form method="GET" action="/forecast">&ndash;&gt;-->
+<!--&lt;!&ndash;            <input type="text" name="city" placeholder="Enter city name" required>&ndash;&gt;-->
+<!--&lt;!&ndash;            <button type="submit">Get Weather</button>&ndash;&gt;-->
+<!--&lt;!&ndash;        </form>&ndash;&gt;-->
+<!--        <form method="GET" action="/forecast">-->
+<!--            <input type="text" id="cityInput" name="city" placeholder="Enter city name" required>-->
+<!--            <div id="cityList"></div>-->
+<!--            <button type="submit">Get Weather</button>-->
+<!--            <button type="button" id="sevenDayForecastBtn">7 Day Forecast</button>-->
+<!--        </form>-->
+
+<!--        {% if data %}-->
+<!--        <div class="weather">-->
+<!--            <h2>{{ data.name }}, {{ data.sys['country'] }}</h2>-->
+<!--            <img src="http://openweathermap.org/img/wn/{{ data.weather[0]['icon'] }}@2x.png" alt="Weather Icon">-->
+<!--            <p>Temperature: {{ data.main['temp'] }}&deg;C</p>-->
+<!--            <p>Feels Like: {{ data.main['feels_like'] }}&deg;C</p>-->
+<!--            <p>Humidity: {{ data.main['humidity'] }}%</p>-->
+<!--            <p>Description: {{ data.weather[0]['description'] }}</p>-->
+<!--        </div>-->
+<!--        {% endif %}-->
+<!--    </div>-->
+<!--&lt;!&ndash;    <div id="map"></div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    &lt;!&ndash; Include the JavaScript code for the weather map &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <script>&ndash;&gt;-->
+<!--&lt;!&ndash;        // Initialize the map&ndash;&gt;-->
+<!--&lt;!&ndash;        function initMap() {&ndash;&gt;-->
+<!--&lt;!&ndash;            // Define the map options&ndash;&gt;-->
+<!--&lt;!&ndash;            var mapOptions = {&ndash;&gt;-->
+<!--&lt;!&ndash;                center: { lat: 0, lng: 0 },&ndash;&gt;-->
+<!--&lt;!&ndash;                zoom: 2&ndash;&gt;-->
+<!--&lt;!&ndash;            };&ndash;&gt;-->
+<!--&lt;!&ndash;            // Create the map&ndash;&gt;-->
+<!--&lt;!&ndash;            var map = new google.maps.Map(document.getElementById('map'), mapOptions);&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+<!--&lt;!&ndash;    </script>&ndash;&gt;-->
+<!--&lt;!&ndash;    &lt;!&ndash; Include the Google Maps JavaScript API &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;    <script src="https://maps.googleapis.com/maps/api/js?key=09e1bd599470636b1cafa4556cab1d47&callback=initMap" async defer></script>&ndash;&gt;-->
+<!--    <script>-->
+<!--        document.getElementById('sevenDayForecastBtn').addEventListener('click', function() {-->
+<!--            var city = document.getElementById('cityInput').value;-->
+<!--            if (city.trim() !== '') {-->
+<!--                window.location.href = '/7dayforecast?city=' + encodeURIComponent(city);-->
+<!--            }-->
+<!--        });-->
+<!--    </script>-->
+
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 105px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .weather {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        img {
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form method="GET" action="/forecast">
+            <div class="input-group">
+                <input type="text" id="cityInput" name="city" class="form-control" placeholder="Enter city name" required>
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Get Weather</button>
+                    <button type="button" id="sevenDayForecastBtn" class="btn btn-secondary">7 Day Forecast</button>
+                </div>
+            </div>
+        </form>
+
+        {% if data %}
+        <div class="weather">
+            <h2>{{ data.name }}, {{ data.sys['country'] }}</h2>
+            <img src="http://openweathermap.org/img/wn/{{ data.weather[0]['icon'] }}@2x.png" alt="Weather Icon">
+            <p>Temperature: {{ data.main['temp'] }}&deg;C</p>
+            <p>Feels Like: {{ data.main['feels_like'] }}&deg;C</p>
+            <p>Humidity: {{ data.main['humidity'] }}%</p>
+            <p>Description: {{ data.weather[0]['description'] }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.getElementById('sevenDayForecastBtn').addEventListener('click', function() {
+            var city = document.getElementById('cityInput').value;
+            if (city.trim() !== '') {
+                window.location.href = '/7dayforecast?city=' + encodeURIComponent(city);
+            }
+        });
+    </script>
+
+</body>
+
+</html>
+
+

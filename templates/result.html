@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>7 Day Forecast</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .day-container {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .day-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .square-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .square {
+            width: calc(10% - 20px); /* Adjusted width */
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+        }
+
+        .square img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>7 Day Forecast</h1>
+        <div class="forecast">
+            {% set grouped_forecast = {} %}
+            {% for forecast in data.list %}
+                {% set day = forecast.dt_txt.split(' ')[0] %}
+                {% if day not in grouped_forecast %}
+                    {% set _ = grouped_forecast.update({day: [forecast]}) %}
+                {% else %}
+                    {% set _ = grouped_forecast[day].append(forecast) %}
+                {% endif %}
+            {% endfor %}
+            {% for day, forecasts in grouped_forecast.items() %}
+                <div class="day-container">
+                    <h2 class="day-header">{{ day }}</h2>
+                    <div class="square-container">
+                        {% for forecast in forecasts %}
+                            <div class="square" style="background-color: {{ get_weather_color(forecast.weather[0].main) }}">
+                                <img src="http://openweathermap.org/img/wn/{{ forecast.weather[0].icon }}.png" alt="Weather Icon">
+                                <p>{{ forecast.dt_txt.split(' ')[1] | to_12_hour_format }}</p>
+                                <p>{{ forecast.main.temp }}&deg;C</p>
+                                <p>{{ forecast.weather[0].description }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+
+</html>
